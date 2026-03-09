@@ -25,22 +25,38 @@ export default async function handler(req, res) {
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    // Guild Reports abrufen
-    const reportsResponse = await fetch(
-      "https://www.warcraftlogs.com/v1/reports/guild/We%20Pull%20at%20Two/Blackrock/eu",
+
+    // GraphQL Query
+    const query = `
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
+        reportData {
+          reports(guildName: "We Pull at Two", guildServerSlug: "blackrock", guildServerRegion: "eu", limit: 5) {
+            data {
+              code
+              title
+              startTime
+              endTime
+            }
+          }
         }
+      }
+    `;
+
+    const reportsResponse = await fetch(
+      "https://www.warcraftlogs.com/api/v2/client",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query })
       }
     );
 
-    const reports = await reportsResponse.json();
+    const reportsData = await reportsResponse.json();
 
-    res.status(200).json({
-      totalReports: reports.length,
-      latestReport: reports[0]
-    });
+    res.status(200).json(reportsData);
 
   } catch (error) {
 
