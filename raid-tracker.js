@@ -20,28 +20,21 @@ async function loadRaidTracker(){
       `;
 
       return;
-
     }
 
     let timelineHTML = "";
 
     data.timeline.forEach((pull,i)=>{
 
-      const best = (i === data.timeline.length-1);
+      const isBest = (i === data.timeline.length-1);
 
       timelineHTML += `
-        <div class="pull-row ${best ? "best" : ""}">
-          Pull ${pull.pull} → ${pull.percent}% ${best ? "⭐" : ""}
+        <div class="pull-row ${isBest ? "best" : ""}">
+          Pull ${pull.pull} → ${pull.percent}% ${isBest ? "⭐" : ""}
         </div>
       `;
 
     });
-
-    const killText = data.kill ? `
-      <div class="boss-kill">
-        🏆 BOSS DOWN
-      </div>
-    ` : "";
 
     container.innerHTML = `
 
@@ -55,8 +48,6 @@ async function loadRaidTracker(){
           ${data.boss}
         </div>
 
-        ${killText}
-
         <div class="raid-stats">
           Pulls: ${data.totalPulls}
         </div>
@@ -66,17 +57,22 @@ async function loadRaidTracker(){
         </div>
 
         <div class="raid-timeline">
+
+          <strong>Progress Timeline</strong>
+
           ${timelineHTML}
+
         </div>
 
         <a class="raid-log"
-           href="https://www.warcraftlogs.com/reports/${data.report}"
-           target="_blank">
-           WarcraftLogs öffnen
+        href="https://www.warcraftlogs.com/reports/${data.report}"
+        target="_blank">
+
+        WarcraftLogs öffnen
+
         </a>
 
       </div>
-
     `;
 
   }
