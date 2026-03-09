@@ -9,7 +9,6 @@ export default async function handler(req, res) {
       .from(`${clientId}:${clientSecret}`)
       .toString("base64");
 
-    // OAuth Token holen
     const tokenResponse = await fetch(
       "https://www.warcraftlogs.com/oauth/token",
       {
@@ -25,7 +24,6 @@ export default async function handler(req, res) {
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    // neuesten Report der Gilde holen
     const reportsQuery = `
       {
         reportData {
@@ -37,7 +35,6 @@ export default async function handler(req, res) {
           ) {
             data {
               code
-              title
               startTime
               endTime
             }
@@ -65,11 +62,17 @@ export default async function handler(req, res) {
     const reportCode = report.code;
     const startTime = report.startTime;
 
-    // prüfen ob Raid aktuell ist (6 Stunden Fenster)
     const now = Date.now();
+
     const raidIsLive = (now - startTime) < (6 * 60 * 60 * 1000);
 
-    // Fight Daten laden
+    const raidDurationMs = now - startTime;
+
+    const raidHours = Math.floor(raidDurationMs / (1000 * 60 * 60));
+    const raidMinutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    const raidDuration = `${raidHours}h ${raidMinutes}m`;
+
     const fightsQuery = `
       {
         reportData {
@@ -103,58 +106,62 @@ export default async function handler(req, res) {
 
     const pulls = fights.filter(f => f.bossPercentage !== null);
 
-    if(pulls.length === 0){
+    if (pulls.length === 0) {
 
       return res.status(200).json({
-        live:false
+        live: false
       });
 
     }
 
-    const totalPulls = pulls.length;
+    const lastPull = pulls[pulls.length - 1];
+
+    const currentBoss = lastPull.name;
+
+    const bossPulls = pulls.filter(p => p.name === currentBoss);
+
+    const totalPulls = bossPulls.length;
 
     let best = 100;
 
     const timeline = [];
 
-    pulls.forEach((pull,index)=>{
+    bossPulls.forEach((pull, index) => {
 
       const percent = pull.bossPercentage;
 
-      if(percent < best){
+      if (percent < best) {
 
         best = percent;
 
         timeline.push({
-          pull:index+1,
-          percent:percent.toFixed(2),
-          boss:pull.name
+          pull: index + 1,
+          percent: percent.toFixed(2)
         });
 
       }
 
     });
 
-    const lastPull = pulls[pulls.length-1];
-
     res.status(200).json({
 
-      live:raidIsLive,
-      report:reportCode,
-      boss:pulls[0].name,
-      totalPulls:totalPulls,
-      bestPull:best.toFixed(2),
-      kill:lastPull.kill || false,
-      timeline:timeline
+      live: raidIsLive,
+      report: reportCode,
+      boss: currentBoss,
+      raidDuration: raidDuration,
+      totalPulls: totalPulls,
+      bestPull: best.toFixed(2),
+      kill: lastPull.kill || false,
+      timeline: timeline
 
     });
 
   }
 
-  catch(error){
+  catch (error) {
 
     res.status(500).json({
-      error:error.message
+      error: error.message
     });
 
   }
