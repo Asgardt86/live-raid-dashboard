@@ -93,10 +93,45 @@ export default async function handler(req, res) {
 
     const fightsData = await fightsResponse.json();
 
-    res.status(200).json({
-      report: reportCode,
-      fights: fightsData.data.reportData.report.fights
+const fights = fightsData.data.reportData.report.fights;
+
+// nur echte Boss Pulls
+const pulls = fights.filter(f => f.bossPercentage !== null);
+
+// Pull Counter
+const totalPulls = pulls.length;
+
+// Best Pull
+let best = 100;
+
+// Progress Timeline
+const timeline = [];
+
+pulls.forEach((pull, index) => {
+
+  const percent = pull.bossPercentage;
+
+  if (percent < best) {
+
+    best = percent;
+
+    timeline.push({
+      pull: index + 1,
+      percent: percent.toFixed(2),
+      boss: pull.name
     });
+
+  }
+
+});
+
+res.status(200).json({
+  report: reportCode,
+  boss: pulls[0]?.name,
+  totalPulls: totalPulls,
+  bestPull: best.toFixed(2),
+  timeline: timeline
+});
 
   } catch (error) {
 
