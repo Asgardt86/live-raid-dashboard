@@ -59,24 +59,14 @@ export default async function handler(req, res) {
 
     const report = reportsData.data.reportData.reports.data[0];
 
-    if(!report){
-
+    if (!report) {
       return res.status(200).json({ live:false });
-
     }
 
     const reportCode = report.code;
     const startTime = report.startTime;
-    const endTime = report.endTime;
 
     const now = Date.now();
-
-    const raidDurationMs = (endTime || now) - startTime;
-
-    const hours = Math.floor(raidDurationMs / (1000 * 60 * 60));
-    const minutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    const raidDuration = `${hours}h ${minutes}m`;
 
     const fightsQuery = `
       {
@@ -87,6 +77,7 @@ export default async function handler(req, res) {
               bossPercentage
               kill
               difficulty
+              startTime
             }
           }
         }
@@ -111,13 +102,18 @@ export default async function handler(req, res) {
 
     const pulls = fights.filter(f => f.bossPercentage !== null);
 
-    if(pulls.length === 0){
-
+    if (pulls.length === 0) {
       return res.status(200).json({ live:false });
-
     }
 
-    const lastPull = pulls[pulls.length-1];
+    const lastPull = pulls[pulls.length - 1];
+
+    const lastPullTime = startTime + lastPull.startTime;
+
+    const minutesSinceLastPull =
+      (now - lastPullTime) / 1000 / 60;
+
+    const raidStillActive = minutesSinceLastPull < 10;
 
     const currentBoss = lastPull.name;
 
@@ -127,9 +123,12 @@ export default async function handler(req, res) {
       5: "Mythic"
     };
 
-    const difficulty = difficultyMap[lastPull.difficulty] || "";
+    const difficulty =
+      difficultyMap[lastPull.difficulty] || "";
 
-    const bossPulls = pulls.filter(p => p.name === currentBoss);
+    const bossPulls = pulls.filter(
+      p => p.name === currentBoss
+    );
 
     const totalPulls = bossPulls.length;
 
@@ -146,7 +145,7 @@ export default async function handler(req, res) {
         best = percent;
 
         timeline.push({
-          pull:index+1,
+          pull:index + 1,
           percent:percent.toFixed(2)
         });
 
@@ -154,7 +153,20 @@ export default async function handler(req, res) {
 
     });
 
-    if(endTime){
+    const raidDurationMs = now - startTime;
+
+    const hours =
+      Math.floor(raidDurationMs / (1000 * 60 * 60));
+
+    const minutes =
+      Math.floor(
+        (raidDurationMs % (1000 * 60 * 60))
+        / (1000 * 60)
+      );
+
+    const raidDuration = `${hours}h ${minutes}m`;
+
+    if(!raidStillActive){
 
       return res.status(200).json({
 
