@@ -15,13 +15,11 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-
-    // erstmal nur testen ob Token funktioniert
 
     res.status(200).json({
-      tokenWorking: true,
-      tokenPreview: accessToken.substring(0,20)
+      clientIdExists: !!clientId,
+      clientSecretExists: !!clientSecret,
+      tokenResponse: tokenData
     });
 
   } catch (error) {
