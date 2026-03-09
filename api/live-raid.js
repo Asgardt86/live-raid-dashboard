@@ -60,8 +60,14 @@ export default async function handler(req, res) {
 
     const reportsData = await reportsResponse.json();
 
-    const reportCode =
-      reportsData.data.reportData.reports.data[0].code;
+    const report = reportsData.data.reportData.reports.data[0];
+
+    const reportCode = report.code;
+    const startTime = report.startTime;
+
+    // prüfen ob Raid aktuell ist (6 Stunden Fenster)
+    const now = Date.now();
+    const raidIsLive = (now - startTime) < (6 * 60 * 60 * 1000);
 
     // Fight Daten laden
     const fightsQuery = `
@@ -93,50 +99,62 @@ export default async function handler(req, res) {
 
     const fightsData = await fightsResponse.json();
 
-const fights = fightsData.data.reportData.report.fights;
+    const fights = fightsData.data.reportData.report.fights;
 
-// nur echte Boss Pulls
-const pulls = fights.filter(f => f.bossPercentage !== null);
+    const pulls = fights.filter(f => f.bossPercentage !== null);
 
-// Pull Counter
-const totalPulls = pulls.length;
+    if(pulls.length === 0){
 
-// Best Pull
-let best = 100;
+      return res.status(200).json({
+        live:false
+      });
 
-// Progress Timeline
-const timeline = [];
+    }
 
-pulls.forEach((pull, index) => {
+    const totalPulls = pulls.length;
 
-  const percent = pull.bossPercentage;
+    let best = 100;
 
-  if (percent < best) {
+    const timeline = [];
 
-    best = percent;
+    pulls.forEach((pull,index)=>{
 
-    timeline.push({
-      pull: index + 1,
-      percent: percent.toFixed(2),
-      boss: pull.name
+      const percent = pull.bossPercentage;
+
+      if(percent < best){
+
+        best = percent;
+
+        timeline.push({
+          pull:index+1,
+          percent:percent.toFixed(2),
+          boss:pull.name
+        });
+
+      }
+
+    });
+
+    const lastPull = pulls[pulls.length-1];
+
+    res.status(200).json({
+
+      live:raidIsLive,
+      report:reportCode,
+      boss:pulls[0].name,
+      totalPulls:totalPulls,
+      bestPull:best.toFixed(2),
+      kill:lastPull.kill || false,
+      timeline:timeline
+
     });
 
   }
 
-});
-
-res.status(200).json({
-  report: reportCode,
-  boss: pulls[0]?.name,
-  totalPulls: totalPulls,
-  bestPull: best.toFixed(2),
-  timeline: timeline
-});
-
-  } catch (error) {
+  catch(error){
 
     res.status(500).json({
-      error: error.message
+      error:error.message
     });
 
   }
