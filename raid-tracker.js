@@ -7,8 +7,7 @@ async function loadRaidTracker(){
     const res = await fetch("/api/live-raid");
     const data = await res.json();
 
-    // Kein Raid erkannt
-    if(!data.boss || data.totalPulls === 0){
+    if(!data.live){
 
       container.innerHTML = `
         <div class="raid-card">
@@ -21,17 +20,18 @@ async function loadRaidTracker(){
       `;
 
       return;
+
     }
 
     let timelineHTML = "";
 
     data.timeline.forEach((pull,i)=>{
 
-      const isBest = i === data.timeline.length-1;
+      const best = (i === data.timeline.length-1);
 
       timelineHTML += `
-        <div class="pull-row ${isBest ? "best" : ""}">
-          Pull ${pull.pull} → ${pull.percent}% ${isBest ? "⭐" : ""}
+        <div class="pull-row ${best ? "best" : ""}">
+          Pull ${pull.pull} → ${pull.percent}% ${best ? "⭐" : ""}
         </div>
       `;
 
@@ -79,7 +79,9 @@ async function loadRaidTracker(){
 
     `;
 
-  }catch(e){
+  }
+
+  catch(e){
 
     container.innerHTML = `
       <div class="raid-card">
@@ -93,5 +95,4 @@ async function loadRaidTracker(){
 
 loadRaidTracker();
 
-// Auto Refresh alle 30 Sekunden
 setInterval(loadRaidTracker,30000);
