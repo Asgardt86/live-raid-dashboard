@@ -1,169 +1,114 @@
-export default async function handler(req, res) {
+async function loadRaidTracker(){
 
-  try {
+  const container = document.getElementById("raid-tracker");
 
-    const clientId = process.env.WCL_CLIENT_ID;
-    const clientSecret = process.env.WCL_CLIENT_SECRET;
+  try{
 
-    const credentials = Buffer
-      .from(`${clientId}:${clientSecret}`)
-      .toString("base64");
+    const res = await fetch("/api/live-raid");
+    const data = await res.json();
 
-    const tokenResponse = await fetch(
-      "https://www.warcraftlogs.com/oauth/token",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${credentials}`,
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: "grant_type=client_credentials"
-      }
-    );
+    // Kein Raid aktiv
+    if(!data.live){
 
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
+      container.innerHTML = `
+        <div class="raid-card">
 
-    const reportsQuery = `
-      {
-        reportData {
-          reports(
-            guildName: "We Pull at Two",
-            guildServerSlug: "blackrock",
-            guildServerRegion: "eu",
-            limit: 1
-          ) {
-            data {
-              code
-              startTime
-              endTime
-            }
-          }
-        }
-      }
-    `;
+          <div class="raid-status offline">
+            🔴 Aktuell kein Live Raid
+          </div>
 
-    const reportsResponse = await fetch(
-      "https://www.warcraftlogs.com/api/v2/client",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ query: reportsQuery })
-      }
-    );
+        </div>
+      `;
 
-    const reportsData = await reportsResponse.json();
+      return;
+    }
 
-    const report = reportsData.data.reportData.reports.data[0];
+    // Timeline bauen
+    let timelineHTML = "";
 
-    const reportCode = report.code;
-    const startTime = report.startTime;
+    if(data.timeline){
 
-    const now = Date.now();
+      data.timeline.forEach((pull,i)=>{
 
-    const raidIsLive = (now - startTime) < (6 * 60 * 60 * 1000);
+        const isBest = (i === data.timeline.length-1);
 
-    const raidDurationMs = now - startTime;
+        timelineHTML += `
+          <div class="pull-row ${isBest ? "best" : ""}">
+            Pull ${pull.pull} → ${pull.percent}% ${isBest ? "⭐" : ""}
+          </div>
+        `;
 
-    const raidHours = Math.floor(raidDurationMs / (1000 * 60 * 60));
-    const raidMinutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    const raidDuration = `${raidHours}h ${raidMinutes}m`;
-
-    const fightsQuery = `
-      {
-        reportData {
-          report(code: "${reportCode}") {
-            fights {
-              id
-              name
-              bossPercentage
-              kill
-            }
-          }
-        }
-      }
-    `;
-
-    const fightsResponse = await fetch(
-      "https://www.warcraftlogs.com/api/v2/client",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ query: fightsQuery })
-      }
-    );
-
-    const fightsData = await fightsResponse.json();
-
-    const fights = fightsData.data.reportData.report.fights;
-
-    const pulls = fights.filter(f => f.bossPercentage !== null);
-
-    if (pulls.length === 0) {
-
-      return res.status(200).json({
-        live: false
       });
 
     }
 
-    const lastPull = pulls[pulls.length - 1];
+    const killText = data.kill ? `
+      <div class="boss-kill">
+        🏆 BOSS DOWN
+      </div>
+    ` : "";
 
-    const currentBoss = lastPull.name;
+    container.innerHTML = `
 
-    const bossPulls = pulls.filter(p => p.name === currentBoss);
+      <div class="raid-card">
 
-    const totalPulls = bossPulls.length;
+        <div class="raid-status live">
+          🟢 LIVE RAID
+        </div>
 
-    let best = 100;
+        <div class="raid-boss">
+          ${data.boss || ""}
+        </div>
 
-    const timeline = [];
+        ${killText}
 
-    bossPulls.forEach((pull, index) => {
+        <div class="raid-stats">
+          Raid läuft seit: ${data.raidDuration || ""}
+        </div>
 
-      const percent = pull.bossPercentage;
+        <div class="raid-stats">
+          Pulls: ${data.totalPulls || 0}
+        </div>
 
-      if (percent < best) {
+        <div class="raid-stats">
+          Best Pull: ${data.bestPull || "-"}%
+        </div>
 
-        best = percent;
+        <div class="raid-timeline">
 
-        timeline.push({
-          pull: index + 1,
-          percent: percent.toFixed(2)
-        });
+          <strong>Progress Timeline</strong>
 
-      }
+          ${timelineHTML}
 
-    });
+        </div>
 
-    res.status(200).json({
+        <a class="raid-log"
+        href="https://www.warcraftlogs.com/reports/${data.report}"
+        target="_blank">
 
-      live: raidIsLive,
-      report: reportCode,
-      boss: currentBoss,
-      raidDuration: raidDuration,
-      totalPulls: totalPulls,
-      bestPull: best.toFixed(2),
-      kill: lastPull.kill || false,
-      timeline: timeline
+        WarcraftLogs öffnen
 
-    });
+        </a>
+
+      </div>
+
+    `;
 
   }
 
-  catch (error) {
+  catch(e){
 
-    res.status(500).json({
-      error: error.message
-    });
+    container.innerHTML = `
+      <div class="raid-card">
+        Fehler beim Laden
+      </div>
+    `;
 
   }
 
 }
+
+loadRaidTracker();
+
+// alle 30 Sekunden aktualisieren
+setInterval(loadRaidTracker,30000);
