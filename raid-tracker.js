@@ -57,7 +57,7 @@ async function loadRaidTracker(){
         </div>
 
         <div class="raid-boss">
-          ${data.boss || ""}
+        ${data.boss || ""} ${data.difficulty ? "– " + data.difficulty : ""}
         </div>
 
         ${killText}
