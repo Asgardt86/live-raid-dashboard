@@ -1,19 +1,19 @@
 export default async function handler(req, res) {
-
   try {
-
     const clientId = process.env.WCL_CLIENT_ID;
     const clientSecret = process.env.WCL_CLIENT_SECRET;
 
-    const credentials = btoa(`${clientId}:${clientSecret}`);
+    const params = new URLSearchParams();
+    params.append("grant_type", "client_credentials");
+    params.append("client_id", clientId);
+    params.append("client_secret", clientSecret);
 
     const tokenResponse = await fetch("https://www.warcraftlogs.com/oauth/token", {
       method: "POST",
       headers: {
-        "Authorization": `Basic ${credentials}`,
         "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: "grant_type=client_credentials"
+      body: params.toString()
     });
 
     const tokenData = await tokenResponse.json();
@@ -23,11 +23,8 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-
     res.status(500).json({
       error: error.message
     });
-
   }
-
 }
