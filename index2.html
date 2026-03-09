@@ -5,45 +5,89 @@
 
 <meta charset="UTF-8">
 
+<title>LiveTracker – Raid Progress</title>
+
 <style>
 
 body{
   background:#0f172a;
   font-family:Arial;
   color:white;
+  padding:40px;
 }
 
+/* CARD */
+
 .raid-card{
-  background:#0b1a33;
+  background:#0f172a;
   border:1px solid #d4af37;
+  border-radius:14px;
   padding:20px;
-  border-radius:12px;
   max-width:600px;
 }
 
-.raid-live{
-  color:#22c55e;
+/* STATUS */
+
+.raid-status{
   font-weight:bold;
   margin-bottom:10px;
 }
 
+.raid-status.live{
+  color:#22c55e;
+  text-shadow:0 0 10px rgba(34,197,94,0.8);
+}
+
+.raid-status.offline{
+  color:#ef4444;
+}
+
+/* BOSS */
+
 .raid-boss{
   font-size:20px;
   margin-bottom:10px;
+  color:#facc15;
 }
+
+/* STATS */
 
 .raid-stats{
   margin-bottom:6px;
 }
 
-.pull-row{
+/* TIMELINE */
+
+.raid-timeline{
+  margin-top:12px;
   font-size:13px;
 }
+
+.pull-row{
+  margin-bottom:2px;
+}
+
+.pull-row.best{
+  color:#22c55e;
+  font-weight:bold;
+}
+
+/* BOSS KILL */
+
+.boss-kill{
+  margin:10px 0;
+  font-weight:bold;
+  color:#facc15;
+  text-shadow:0 0 8px gold;
+}
+
+/* LOG BUTTON */
 
 .raid-log{
   display:inline-block;
   margin-top:15px;
   color:#facc15;
+  text-decoration:none;
 }
 
 </style>
