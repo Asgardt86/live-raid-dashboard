@@ -59,29 +59,34 @@ export default async function handler(req, res) {
 
     const report = reportsData.data.reportData.reports.data[0];
 
+    if(!report){
+
+      return res.status(200).json({ live:false });
+
+    }
+
     const reportCode = report.code;
     const startTime = report.startTime;
+    const endTime = report.endTime;
 
     const now = Date.now();
 
-    const raidIsLive = (now - startTime) < (6 * 60 * 60 * 1000);
+    const raidDurationMs = (endTime || now) - startTime;
 
-    const raidDurationMs = now - startTime;
+    const hours = Math.floor(raidDurationMs / (1000 * 60 * 60));
+    const minutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
 
-    const raidHours = Math.floor(raidDurationMs / (1000 * 60 * 60));
-    const raidMinutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    const raidDuration = `${raidHours}h ${raidMinutes}m`;
+    const raidDuration = `${hours}h ${minutes}m`;
 
     const fightsQuery = `
       {
         reportData {
           report(code: "${reportCode}") {
             fights {
-              id
               name
               bossPercentage
               kill
+              difficulty
             }
           }
         }
@@ -106,17 +111,23 @@ export default async function handler(req, res) {
 
     const pulls = fights.filter(f => f.bossPercentage !== null);
 
-    if (pulls.length === 0) {
+    if(pulls.length === 0){
 
-      return res.status(200).json({
-        live: false
-      });
+      return res.status(200).json({ live:false });
 
     }
 
-    const lastPull = pulls[pulls.length - 1];
+    const lastPull = pulls[pulls.length-1];
 
     const currentBoss = lastPull.name;
+
+    const difficultyMap = {
+      3: "Normal",
+      4: "Heroic",
+      5: "Mythic"
+    };
+
+    const difficulty = difficultyMap[lastPull.difficulty] || "";
 
     const bossPulls = pulls.filter(p => p.name === currentBoss);
 
@@ -126,42 +137,60 @@ export default async function handler(req, res) {
 
     const timeline = [];
 
-    bossPulls.forEach((pull, index) => {
+    bossPulls.forEach((pull,index)=>{
 
-      const percent = pull.bossPercentage;
+      let percent = pull.kill ? 0 : pull.bossPercentage;
 
-      if (percent < best) {
+      if(percent < best){
 
         best = percent;
 
         timeline.push({
-          pull: index + 1,
-          percent: percent.toFixed(2)
+          pull:index+1,
+          percent:percent.toFixed(2)
         });
 
       }
 
     });
 
+    if(endTime){
+
+      return res.status(200).json({
+
+        live:false,
+        summary:true,
+        boss:currentBoss,
+        difficulty:difficulty,
+        report:reportCode,
+        raidDuration:raidDuration,
+        totalPulls:totalPulls,
+        bestPull:best.toFixed(2)
+
+      });
+
+    }
+
     res.status(200).json({
 
-      live: raidIsLive,
-      report: reportCode,
-      boss: currentBoss,
-      raidDuration: raidDuration,
-      totalPulls: totalPulls,
-      bestPull: best.toFixed(2),
-      kill: lastPull.kill || false,
-      timeline: timeline
+      live:true,
+      boss:currentBoss,
+      difficulty:difficulty,
+      report:reportCode,
+      raidDuration:raidDuration,
+      totalPulls:totalPulls,
+      bestPull:best.toFixed(2),
+      kill:lastPull.kill || false,
+      timeline:timeline
 
     });
 
   }
 
-  catch (error) {
+  catch(error){
 
     res.status(500).json({
-      error: error.message
+      error:error.message
     });
 
   }
