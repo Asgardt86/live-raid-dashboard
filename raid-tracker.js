@@ -1,94 +1,169 @@
-async function loadRaidTracker(){
+export default async function handler(req, res) {
 
-  const container = document.getElementById("raid-tracker");
+  try {
 
-  try{
+    const clientId = process.env.WCL_CLIENT_ID;
+    const clientSecret = process.env.WCL_CLIENT_SECRET;
 
-    const res = await fetch("/api/live-raid");
-    const data = await res.json();
+    const credentials = Buffer
+      .from(`${clientId}:${clientSecret}`)
+      .toString("base64");
 
-    if(!data.live){
+    const tokenResponse = await fetch(
+      "https://www.warcraftlogs.com/oauth/token",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "grant_type=client_credentials"
+      }
+    );
 
-      container.innerHTML = `
-        <div class="raid-card">
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
 
-          <div class="raid-status offline">
-            🔴 Aktuell kein Live Raid
-          </div>
+    const reportsQuery = `
+      {
+        reportData {
+          reports(
+            guildName: "We Pull at Two",
+            guildServerSlug: "blackrock",
+            guildServerRegion: "eu",
+            limit: 1
+          ) {
+            data {
+              code
+              startTime
+              endTime
+            }
+          }
+        }
+      }
+    `;
 
-        </div>
-      `;
+    const reportsResponse = await fetch(
+      "https://www.warcraftlogs.com/api/v2/client",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: reportsQuery })
+      }
+    );
 
-      return;
+    const reportsData = await reportsResponse.json();
+
+    const report = reportsData.data.reportData.reports.data[0];
+
+    const reportCode = report.code;
+    const startTime = report.startTime;
+
+    const now = Date.now();
+
+    const raidIsLive = (now - startTime) < (6 * 60 * 60 * 1000);
+
+    const raidDurationMs = now - startTime;
+
+    const raidHours = Math.floor(raidDurationMs / (1000 * 60 * 60));
+    const raidMinutes = Math.floor((raidDurationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    const raidDuration = `${raidHours}h ${raidMinutes}m`;
+
+    const fightsQuery = `
+      {
+        reportData {
+          report(code: "${reportCode}") {
+            fights {
+              id
+              name
+              bossPercentage
+              kill
+            }
+          }
+        }
+      }
+    `;
+
+    const fightsResponse = await fetch(
+      "https://www.warcraftlogs.com/api/v2/client",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query: fightsQuery })
+      }
+    );
+
+    const fightsData = await fightsResponse.json();
+
+    const fights = fightsData.data.reportData.report.fights;
+
+    const pulls = fights.filter(f => f.bossPercentage !== null);
+
+    if (pulls.length === 0) {
+
+      return res.status(200).json({
+        live: false
+      });
+
     }
 
-    let timelineHTML = "";
+    const lastPull = pulls[pulls.length - 1];
 
-    data.timeline.forEach((pull,i)=>{
+    const currentBoss = lastPull.name;
 
-      const isBest = (i === data.timeline.length-1);
+    const bossPulls = pulls.filter(p => p.name === currentBoss);
 
-      timelineHTML += `
-        <div class="pull-row ${isBest ? "best" : ""}">
-          Pull ${pull.pull} → ${pull.percent}% ${isBest ? "⭐" : ""}
-        </div>
-      `;
+    const totalPulls = bossPulls.length;
+
+    let best = 100;
+
+    const timeline = [];
+
+    bossPulls.forEach((pull, index) => {
+
+      const percent = pull.bossPercentage;
+
+      if (percent < best) {
+
+        best = percent;
+
+        timeline.push({
+          pull: index + 1,
+          percent: percent.toFixed(2)
+        });
+
+      }
 
     });
 
-    container.innerHTML = `
+    res.status(200).json({
 
-      <div class="raid-card">
+      live: raidIsLive,
+      report: reportCode,
+      boss: currentBoss,
+      raidDuration: raidDuration,
+      totalPulls: totalPulls,
+      bestPull: best.toFixed(2),
+      kill: lastPull.kill || false,
+      timeline: timeline
 
-        <div class="raid-status live">
-          🟢 LIVE RAID
-        </div>
-
-        <div class="raid-boss">
-          ${data.boss}
-        </div>
-
-        <div class="raid-stats">
-          Pulls: ${data.totalPulls}
-        </div>
-
-        <div class="raid-stats">
-          Best Pull: ${data.bestPull}%
-        </div>
-
-        <div class="raid-timeline">
-
-          <strong>Progress Timeline</strong>
-
-          ${timelineHTML}
-
-        </div>
-
-        <a class="raid-log"
-        href="https://www.warcraftlogs.com/reports/${data.report}"
-        target="_blank">
-
-        WarcraftLogs öffnen
-
-        </a>
-
-      </div>
-    `;
+    });
 
   }
 
-  catch(e){
+  catch (error) {
 
-    container.innerHTML = `
-      <div class="raid-card">
-        Fehler beim Laden
-      </div>
-    `;
+    res.status(500).json({
+      error: error.message
+    });
 
   }
 
 }
-
-loadRaidTracker();
-
-setInterval(loadRaidTracker,30000);
