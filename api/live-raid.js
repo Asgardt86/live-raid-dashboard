@@ -24,6 +24,10 @@ export default async function handler(req, res) {
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
+    /* =========================
+       LETZTEN REPORT LADEN
+    ========================= */
+
     const reportsQuery = `
       {
         reportData {
@@ -64,6 +68,10 @@ export default async function handler(req, res) {
     const reportCode = report.code;
     const reportStart = report.startTime;
 
+    /* =========================
+       FIGHTS LADEN
+    ========================= */
+
     const fightsQuery = `
       {
         reportData {
@@ -102,6 +110,10 @@ export default async function handler(req, res) {
       return res.status(200).json({ live:false });
     }
 
+    /* =========================
+       ZEITEN BERECHNEN
+    ========================= */
+
     const firstPull = pulls[0];
     const firstPullTime = reportStart + firstPull.startTime;
 
@@ -119,7 +131,9 @@ export default async function handler(req, res) {
       minutesSinceLastPull >= 15 &&
       minutesSinceLastPull < 600;
 
-    const currentBoss = lastPull.name;
+    /* =========================
+       DIFFICULTY
+    ========================= */
 
     const difficultyMap = {
       3: "Normal",
@@ -127,8 +141,14 @@ export default async function handler(req, res) {
       5: "Mythic"
     };
 
+    const currentBoss = lastPull.name;
+
     const difficulty =
       difficultyMap[lastPull.difficulty] || "";
+
+    /* =========================
+       BOSS PULLS
+    ========================= */
 
     const bossPulls = pulls.filter(p =>
       p.name === currentBoss &&
@@ -142,7 +162,7 @@ export default async function handler(req, res) {
 
     bossPulls.forEach((pull,index)=>{
 
-      let percent = pull.kill ? 0 : pull.bossPercentage;
+      const percent = pull.kill ? 0 : pull.bossPercentage;
 
       if(percent < best){
 
@@ -156,6 +176,10 @@ export default async function handler(req, res) {
       }
 
     });
+
+    /* =========================
+       RAID DAUER
+    ========================= */
 
     let raidDurationMs;
 
@@ -176,74 +200,37 @@ export default async function handler(req, res) {
 
     const raidDuration = `${hours}h ${minutes}m`;
 
-    /* ===========================
-       RAID NAMES
-    =========================== */
-
-    const raidNameMap = {
-      37: "The Dreamrift",
-      38: "The Voidspire",
-      39: "March on Quel'Danas"
-    };
-
-    /* ===========================
-       RAID SUMMARY BERECHNEN
-    =========================== */
+    /* =========================
+       RAID SUMMARY
+    ========================= */
 
     const raidStats = {};
 
     fights.forEach(fight => {
 
-      const raidName =
-        raidNameMap[fight.zoneID] || "Raid";
+      if(fight.bossPercentage === null && !fight.kill)
+        return;
 
       const diff =
         difficultyMap[fight.difficulty] || "Unknown";
 
-      if(!raidStats[raidName])
-        raidStats[raidName] = {};
-
-      if(!raidStats[raidName][diff])
-        raidStats[raidName][diff] = {
+      if(!raidStats[diff])
+        raidStats[diff] = {
           kills:0,
           pulls:0
         };
 
       if(fight.bossPercentage !== null)
-        raidStats[raidName][diff].pulls++;
+        raidStats[diff].pulls++;
 
       if(fight.kill)
-        raidStats[raidName][diff].kills++;
+        raidStats[diff].kills++;
 
     });
 
-    /* ===========================
-       PROGRESS PRO DIFFICULTY
-    =========================== */
-
-    const bossCount = {
-      "Normal": 8,
-      "Heroic": 8,
-      "Mythic": 8
-    };
-
-    Object.keys(raidStats).forEach(raid => {
-
-      Object.keys(raidStats[raid]).forEach(diff => {
-
-        const kills = raidStats[raid][diff].kills;
-        const total = bossCount[diff] || "?";
-
-        raidStats[raid][diff].progress =
-          `${kills} / ${total} Bosse`;
-
-      });
-
-    });
-
-    /* ===========================
+    /* =========================
        LIVE RAID
-    =========================== */
+    ========================= */
 
     if(raidStillActive){
 
@@ -263,9 +250,9 @@ export default async function handler(req, res) {
 
     }
 
-    /* ===========================
+    /* =========================
        RAID SUMMARY
-    =========================== */
+    ========================= */
 
     if(summaryActive){
 
