@@ -55,7 +55,6 @@ export default async function handler(req, res) {
     );
 
     const reportsData = await reportsResponse.json();
-
     const report = reportsData.data.reportData.reports.data[0];
 
     if (!report) {
@@ -71,6 +70,7 @@ export default async function handler(req, res) {
           report(code: "${reportCode}") {
             fights {
               name
+              zoneID
               bossPercentage
               kill
               difficulty
@@ -94,7 +94,6 @@ export default async function handler(req, res) {
     );
 
     const fightsData = await fightsResponse.json();
-
     const fights = fightsData.data.reportData.report.fights;
 
     const pulls = fights.filter(f => f.bossPercentage !== null);
@@ -103,16 +102,13 @@ export default async function handler(req, res) {
       return res.status(200).json({ live:false });
     }
 
-    // erster Pull (Raidstart)
     const firstPull = pulls[0];
     const firstPullTime = reportStart + firstPull.startTime;
 
-    // letzter Pull
     const lastPull = pulls[pulls.length - 1];
+    const lastPullTime = reportStart + lastPull.startTime;
 
     const now = Date.now();
-
-    const lastPullTime = reportStart + lastPull.startTime;
 
     const minutesSinceLastPull =
       (now - lastPullTime) / 1000 / 60;
@@ -142,7 +138,6 @@ export default async function handler(req, res) {
     const totalPulls = bossPulls.length;
 
     let best = 100;
-
     const timeline = [];
 
     bossPulls.forEach((pull,index)=>{
@@ -181,6 +176,35 @@ export default async function handler(req, res) {
 
     const raidDuration = `${hours}h ${minutes}m`;
 
+    /* ===========================
+       RAID SUMMARY BERECHNEN
+    =========================== */
+
+    const raidStats = {};
+
+    fights.forEach(fight => {
+
+      const raid = fight.zoneID || "raid";
+      const diff = difficultyMap[fight.difficulty] || "Unknown";
+
+      if(!raidStats[raid]) raidStats[raid] = {};
+      if(!raidStats[raid][diff])
+        raidStats[raid][diff] = {kills:0,pulls:0};
+
+      if(fight.bossPercentage !== null){
+        raidStats[raid][diff].pulls++;
+      }
+
+      if(fight.kill){
+        raidStats[raid][diff].kills++;
+      }
+
+    });
+
+    /* ===========================
+       LIVE RAID
+    =========================== */
+
     if(raidStillActive){
 
       return res.status(200).json({
@@ -199,18 +223,19 @@ export default async function handler(req, res) {
 
     }
 
+    /* ===========================
+       RAID SUMMARY
+    =========================== */
+
     if(summaryActive){
 
       return res.status(200).json({
 
         live:false,
         summary:true,
-        boss:currentBoss,
-        difficulty:difficulty,
-        report:reportCode,
         raidDuration:raidDuration,
-        totalPulls:totalPulls,
-        bestPull:best.toFixed(2)
+        report:reportCode,
+        raidStats:raidStats
 
       });
 
