@@ -70,6 +70,7 @@ export default async function handler(req, res) {
     let activeReport = null;
     let fights = [];
     let reportStart = 0;
+    let raidName = "";
 
     /* =====================
        AKTIVEN LOG SUCHEN
@@ -81,6 +82,9 @@ export default async function handler(req, res) {
       {
         reportData {
           report(code:"${report.code}") {
+            zone {
+              name
+            }
             fights {
               name
               bossPercentage
@@ -106,8 +110,11 @@ export default async function handler(req, res) {
 
       const fightsData = await fightsResponse.json();
 
+      const reportData =
+        fightsData?.data?.reportData?.report;
+
       const pulls =
-        fightsData?.data?.reportData?.report?.fights
+        reportData?.fights
         ?.filter(f=>f.bossPercentage!==null) || [];
 
       if(pulls.length === 0) continue;
@@ -125,6 +132,7 @@ export default async function handler(req, res) {
         activeReport = report;
         fights = pulls;
         reportStart = report.startTime;
+        raidName = reportData?.zone?.name || "";
         break;
 
       }
@@ -134,6 +142,7 @@ export default async function handler(req, res) {
         activeReport = report;
         fights = pulls;
         reportStart = report.startTime;
+        raidName = reportData?.zone?.name || "";
 
       }
 
@@ -263,6 +272,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
 
         live:true,
+        raidName:raidName,
         boss:currentBoss,
         difficulty:difficulty,
         report:activeReport.code,
@@ -286,6 +296,7 @@ export default async function handler(req, res) {
 
         live:false,
         summary:true,
+        raidName:raidName,
         raidDuration:raidDuration,
         report:activeReport.code,
         raidStats:raidStats
