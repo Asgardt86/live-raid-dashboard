@@ -62,7 +62,6 @@ async function loadRaidTracker(){
 
         <div class="raid-card">
 
-          <h2>LiveTracker – Raid Progress</h2>
 
           <div class="raid-status offline">
             🔴 RAID BEENDET
