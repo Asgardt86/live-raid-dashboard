@@ -4,12 +4,15 @@ body{
   color:white;
 
   margin:0;
-  padding:10px;
+
+  min-height:100vh;
 
   display:flex;
   justify-content:center;
-  align-items:flex-start;
+  align-items:center;
 }
+
+/* Container */
 
 #raid-tracker{
   width:100%;
@@ -17,72 +20,143 @@ body{
   justify-content:center;
 }
 
+/* Card */
+
 .raid-card{
   background:#0b1a33;
   border:1px solid #d4af37;
   border-radius:14px;
 
-  padding:20px;
+  padding:22px;
 
-  width:100%;
+  width:90%;
   max-width:600px;
 
   height:auto;
+
+  box-shadow:0 0 20px rgba(0,0,0,0.6);
 }
+
+/* Status */
 
 .raid-status{
   font-weight:bold;
-  margin-bottom:10px;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
+
+/* LIVE RAID */
 
 .raid-status.live{
   color:#22c55e;
-  text-shadow:0 0 10px rgba(34,197,94,0.8);
 }
+
+/* Pulsierender Live Punkt */
+
+.raid-status.live::before{
+  content:"";
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#22c55e;
+
+  box-shadow:0 0 8px #22c55e;
+
+  animation:livePulse 1.5s infinite;
+}
+
+@keyframes livePulse{
+
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(1.4);
+    opacity:0.6;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+}
+
+/* OFFLINE */
 
 .raid-status.offline{
   color:#ef4444;
 }
 
+/* Boss Name */
+
 .raid-boss{
   font-size:20px;
-  margin-bottom:10px;
+  margin-bottom:12px;
   color:#facc15;
 }
 
+/* Stats */
+
 .raid-stats{
-  margin-bottom:5px;
+  margin-bottom:6px;
+  font-size:14px;
 }
 
+/* Timeline */
+
 .raid-timeline{
-  margin-top:12px;
+  margin-top:14px;
   font-size:13px;
 
   max-height:160px;
   overflow-y:auto;
+
+  padding-right:6px;
 }
+
+/* Pull rows */
 
 .pull-row{
   margin-bottom:2px;
 }
+
+/* Best Pull */
 
 .pull-row.best{
   color:#22c55e;
   font-weight:bold;
 }
 
+/* Boss Kill */
+
 .boss-kill{
   margin:10px 0;
+
   font-weight:bold;
+
   color:#facc15;
-  text-shadow:0 0 8px gold;
+
+  text-shadow:
+  0 0 6px gold,
+  0 0 12px rgba(255,215,0,0.6);
 }
+
+/* WarcraftLogs Link */
 
 .raid-log{
   display:inline-block;
-  margin-top:15px;
+  margin-top:16px;
+
   color:#facc15;
+
   text-decoration:none;
+
+  font-weight:bold;
 }
 
 .raid-log:hover{
