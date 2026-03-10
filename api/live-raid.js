@@ -151,7 +151,13 @@ export default async function handler(req, res) {
 
     });
 
-    const raidDurationMs = now - reportStart;
+    let raidDurationMs;
+
+if(raidStillActive){
+  raidDurationMs = now - reportStart;
+}else{
+  raidDurationMs = lastPullTime - reportStart;
+}
 
     const hours =
       Math.floor(raidDurationMs / (1000 * 60 * 60));
