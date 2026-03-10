@@ -24,7 +24,6 @@ async function loadRaidTracker(){
       `;
 
       return;
-
     }
 
     /* ========================
@@ -35,25 +34,27 @@ async function loadRaidTracker(){
 
       let summaryHTML = "";
 
-      Object.entries(data.raidStats).forEach(([raid,diffs]) => {
+      Object.entries(data.raidStats).forEach(([difficulty,stats]) => {
 
-        summaryHTML += `<div class="raid-section">`;
+        summaryHTML += `
 
-        Object.entries(diffs).forEach(([difficulty,stats]) => {
+          <div class="raid-difficulty">
 
-          if(stats.kills === 0 && stats.pulls === 0) return;
-
-          summaryHTML += `
-            <div class="raid-row">
-              <strong>${difficulty}</strong> — 
-              ${stats.kills} Boss${stats.kills === 1 ? "" : "e"} • 
-              ${stats.pulls} Pulls
+            <div class="raid-difficulty-title">
+              ${difficulty}
             </div>
-          `;
 
-        });
+            <div class="raid-row">
+              🏆 Boss Kills: <strong>${stats.kills}</strong>
+            </div>
 
-        summaryHTML += `</div>`;
+            <div class="raid-row">
+              ⚔️ Pulls: <strong>${stats.pulls}</strong>
+            </div>
+
+          </div>
+
+        `;
 
       });
 
@@ -84,6 +85,7 @@ async function loadRaidTracker(){
           </a>
 
         </div>
+
       `;
 
       return;
@@ -127,21 +129,21 @@ async function loadRaidTracker(){
         </div>
 
         <div class="raid-boss">
-        ${data.boss} ${data.difficulty ? "— " + data.difficulty : ""}
+          ${data.boss} ${data.difficulty ? "— " + data.difficulty : ""}
         </div>
 
         ${killText}
 
         <div class="raid-stats">
-          Raid läuft seit: ${data.raidDuration}
+          ⏱ Raid läuft seit: ${data.raidDuration}
         </div>
 
         <div class="raid-stats">
-          Pulls: ${data.totalPulls}
+          ⚔️ Pulls: ${data.totalPulls}
         </div>
 
         <div class="raid-stats">
-          Best Pull: ${data.bestPull}%
+          🎯 Best Pull: ${data.bestPull}%
         </div>
 
         <div class="raid-timeline">
