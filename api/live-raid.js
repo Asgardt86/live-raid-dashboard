@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     );
 
     const reportsData = await reportsResponse.json();
-    const report = reportsData.data.reportData.reports.data[0];
+    const report = reportsData?.data?.reportData?.reports?.data?.[0];
 
     if (!report) {
       return res.status(200).json({ live:false });
@@ -94,7 +94,7 @@ export default async function handler(req, res) {
     );
 
     const fightsData = await fightsResponse.json();
-    const fights = fightsData.data.reportData.report.fights;
+    const fights = fightsData?.data?.reportData?.report?.fights || [];
 
     const pulls = fights.filter(f => f.bossPercentage !== null);
 
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
 
     const summaryActive =
       minutesSinceLastPull >= 15 &&
-      minutesSinceLastPull < 700;
+      minutesSinceLastPull < 360;
 
     const currentBoss = lastPull.name;
 
@@ -177,6 +177,16 @@ export default async function handler(req, res) {
     const raidDuration = `${hours}h ${minutes}m`;
 
     /* ===========================
+       RAID NAMES
+    =========================== */
+
+    const raidNameMap = {
+      37: "The Dreamrift",
+      38: "The Voidspire",
+      39: "March on Quel'Danas"
+    };
+
+    /* ===========================
        RAID SUMMARY BERECHNEN
     =========================== */
 
@@ -184,20 +194,50 @@ export default async function handler(req, res) {
 
     fights.forEach(fight => {
 
-      const raid = fight.zoneID || "raid";
-      const diff = difficultyMap[fight.difficulty] || "Unknown";
+      const raidName =
+        raidNameMap[fight.zoneID] || "Raid";
 
-      if(!raidStats[raid]) raidStats[raid] = {};
-      if(!raidStats[raid][diff])
-        raidStats[raid][diff] = {kills:0,pulls:0};
+      const diff =
+        difficultyMap[fight.difficulty] || "Unknown";
 
-      if(fight.bossPercentage !== null){
-        raidStats[raid][diff].pulls++;
-      }
+      if(!raidStats[raidName])
+        raidStats[raidName] = {};
 
-      if(fight.kill){
-        raidStats[raid][diff].kills++;
-      }
+      if(!raidStats[raidName][diff])
+        raidStats[raidName][diff] = {
+          kills:0,
+          pulls:0
+        };
+
+      if(fight.bossPercentage !== null)
+        raidStats[raidName][diff].pulls++;
+
+      if(fight.kill)
+        raidStats[raidName][diff].kills++;
+
+    });
+
+    /* ===========================
+       PROGRESS PRO DIFFICULTY
+    =========================== */
+
+    const bossCount = {
+      "Normal": 8,
+      "Heroic": 8,
+      "Mythic": 8
+    };
+
+    Object.keys(raidStats).forEach(raid => {
+
+      Object.keys(raidStats[raid]).forEach(diff => {
+
+        const kills = raidStats[raid][diff].kills;
+        const total = bossCount[diff] || "?";
+
+        raidStats[raid][diff].progress =
+          `${kills} / ${total} Bosse`;
+
+      });
 
     });
 
