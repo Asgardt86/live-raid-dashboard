@@ -30,11 +30,32 @@ body{
   padding:22px;
 
   width:90%;
-  max-width:600px;
+  max-width:700px;
 
   height:auto;
 
   box-shadow:0 0 20px rgba(0,0,0,0.6);
+}
+
+/* GRID LAYOUT */
+
+.raid-layout{
+
+  display:grid;
+
+  grid-template-columns: 1fr 200px;
+
+  grid-template-areas:
+    "boss timeline"
+    "kill timeline"
+    "duration timeline"
+    "pulls timeline"
+    "best timeline"
+    "log timeline";
+
+  gap:14px 20px;
+
+  align-items:start;
 }
 
 /* Status */
@@ -92,50 +113,19 @@ body{
   color:#ef4444;
 }
 
-/* Boss Name */
+/* GRID AREAS */
 
 .raid-boss{
+  grid-area:boss;
   font-size:20px;
-  margin-bottom:12px;
+  margin-bottom:4px;
   color:#facc15;
 }
 
-/* Stats */
-
-.raid-stats{
-  margin-bottom:6px;
-  font-size:14px;
-}
-
-/* Timeline */
-
-.raid-timeline{
-  margin-top:14px;
-  font-size:13px;
-
-  max-height:160px;
-  overflow-y:auto;
-
-  padding-right:6px;
-}
-
-/* Pull rows */
-
-.pull-row{
-  margin-bottom:2px;
-}
-
-/* Best Pull */
-
-.pull-row.best{
-  color:#22c55e;
-  font-weight:bold;
-}
-
-/* Boss Kill */
-
 .boss-kill{
-  margin:10px 0;
+  grid-area:kill;
+
+  margin:4px 0;
 
   font-weight:bold;
 
@@ -146,11 +136,22 @@ body{
   0 0 12px rgba(255,215,0,0.6);
 }
 
-/* WarcraftLogs Link */
+.raid-duration{
+  grid-area:duration;
+}
+
+.raid-pulls{
+  grid-area:pulls;
+}
+
+.raid-best{
+  grid-area:best;
+}
 
 .raid-log{
+  grid-area:log;
+
   display:inline-block;
-  margin-top:16px;
 
   color:#facc15;
 
@@ -161,4 +162,75 @@ body{
 
 .raid-log:hover{
   text-decoration:underline;
+}
+
+/* Stats */
+
+.raid-stats{
+  font-size:14px;
+}
+
+/* Timeline */
+
+.raid-timeline{
+
+  grid-area:timeline;
+
+  font-size:13px;
+
+  max-height:180px;
+
+  overflow-y:auto;
+
+  padding-left:12px;
+
+  border-left:1px solid rgba(255,255,255,0.08);
+}
+
+/* Pull rows */
+
+.pull-row{
+  margin-bottom:3px;
+}
+
+/* Best Pull */
+
+.pull-row.best{
+  color:#22c55e;
+  font-weight:bold;
+}
+
+/* MOBILE */
+
+@media (max-width:650px){
+
+  .raid-layout{
+
+    grid-template-columns:1fr;
+
+    grid-template-areas:
+      "boss"
+      "kill"
+      "duration"
+      "pulls"
+      "best"
+      "timeline"
+      "log";
+
+  }
+
+  .raid-timeline{
+
+    border-left:none;
+
+    border-top:1px solid rgba(255,255,255,0.08);
+
+    padding-left:0;
+
+    padding-top:10px;
+
+    margin-top:10px;
+
+  }
+
 }
