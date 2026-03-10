@@ -64,8 +64,6 @@ export default async function handler(req, res) {
 
     const reportCode = report.code;
     const reportStart = report.startTime;
-    const firstPull = pulls(0);
-    const firstPullTime = reportStart + firstPull.startTime;
 
     const fightsQuery = `
       {
@@ -105,6 +103,11 @@ export default async function handler(req, res) {
       return res.status(200).json({ live:false });
     }
 
+    // erster Pull (Raidstart)
+    const firstPull = pulls[0];
+    const firstPullTime = reportStart + firstPull.startTime;
+
+    // letzter Pull
     const lastPull = pulls[pulls.length - 1];
 
     const now = Date.now();
@@ -114,10 +117,10 @@ export default async function handler(req, res) {
     const minutesSinceLastPull =
       (now - lastPullTime) / 1000 / 60;
 
-    const raidStillActive = minutesSinceLastPull < 20;
+    const raidStillActive = minutesSinceLastPull < 15;
 
     const summaryActive =
-      minutesSinceLastPull >= 20 &&
+      minutesSinceLastPull >= 15 &&
       minutesSinceLastPull < 200;
 
     const currentBoss = lastPull.name;
