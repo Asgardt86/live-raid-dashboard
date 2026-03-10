@@ -7,6 +7,46 @@ async function loadRaidTracker(){
     const res = await fetch("/api/live-raid");
     const data = await res.json();
 
+    // RAID SUMMARY
+    if(!data.live && data.summary){
+
+      container.innerHTML = `
+        <div class="raid-card">
+
+          <div class="raid-status offline">
+            🔴 RAID BEENDET
+          </div>
+
+          <div class="raid-boss">
+            ${data.boss || ""} ${data.difficulty ? "– " + data.difficulty : ""}
+          </div>
+
+          <div class="raid-stats">
+            Raid Dauer: ${data.raidDuration || ""}
+          </div>
+
+          <div class="raid-stats">
+            Pulls: ${data.totalPulls || 0}
+          </div>
+
+          <div class="raid-stats">
+            Best Pull: ${data.bestPull || "-"}%
+          </div>
+
+          <a class="raid-log"
+          href="https://www.warcraftlogs.com/reports/${data.report}"
+          target="_blank">
+
+          WarcraftLogs öffnen
+
+          </a>
+
+        </div>
+      `;
+
+      return;
+    }
+
     // Kein Raid aktiv
     if(!data.live){
 
