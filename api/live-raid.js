@@ -110,26 +110,38 @@ export default async function handler(req, res) {
       return res.status(200).json({ live:false });
     }
 
-    /* =========================
-       ZEITEN BERECHNEN
-    ========================= */
+/* =========================
+   ZEITEN BERECHNEN
+========================= */
 
-    const firstPull = pulls[0];
-    const firstPullTime = reportStart + firstPull.startTime;
+const firstPull = pulls[0];
+const lastPull = pulls[pulls.length - 1];
 
-    const lastPull = pulls[pulls.length - 1];
-    const lastPullTime = reportStart + lastPull.startTime;
+const now = Date.now();
 
-    const now = Date.now();
+const firstPullTime = reportStart + firstPull.startTime;
+const lastPullTime = reportStart + (lastPull.startTime || 0);
 
-    const minutesSinceLastPull =
-      (now - lastPullTime) / 1000 / 60;
+const minutesSinceLastPull =
+  (now - lastPullTime) / 1000 / 60;
 
-    const raidStillActive = minutesSinceLastPull < 15;
+const reportAgeMinutes =
+  (now - reportStart) / 1000 / 60;
 
-    const summaryActive =
-      minutesSinceLastPull >= 15 &&
-      minutesSinceLastPull < 600;
+/*
+Live Raid wenn:
+letzter Pull < 20 Minuten
+*/
+const raidStillActive = minutesSinceLastPull < 20;
+
+/*
+Summary wenn:
+letzter Pull > 20 Minuten
+Report jünger als 10 Stunden
+*/
+const summaryActive =
+  minutesSinceLastPull >= 20 &&
+  reportAgeMinutes < 600;
 
     /* =========================
        DIFFICULTY
