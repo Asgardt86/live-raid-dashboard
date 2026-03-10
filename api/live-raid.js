@@ -112,6 +112,12 @@ export default async function handler(req, res) {
     const minutesSinceLastPull =
       (now - lastPullTime) / 1000 / 60;
 
+    const raidStillActive = minutesSinceLastPull < 30;
+
+    const summaryActive =
+      minutesSinceLastPull >= 30 &&
+      minutesSinceLastPull < 200;
+
     const currentBoss = lastPull.name;
 
     const difficultyMap = {
@@ -153,11 +159,11 @@ export default async function handler(req, res) {
 
     let raidDurationMs;
 
-if(raidStillActive){
-  raidDurationMs = now - reportStart;
-}else{
-  raidDurationMs = lastPullTime - reportStart;
-}
+    if(raidStillActive){
+      raidDurationMs = now - reportStart;
+    }else{
+      raidDurationMs = lastPullTime - reportStart;
+    }
 
     const hours =
       Math.floor(raidDurationMs / (1000 * 60 * 60));
@@ -169,12 +175,6 @@ if(raidStillActive){
       );
 
     const raidDuration = `${hours}h ${minutes}m`;
-
-    const raidStillActive = minutesSinceLastPull < 30;
-
-    const summaryActive =
-      minutesSinceLastPull >= 25 &&
-      minutesSinceLastPull < 200;
 
     if(raidStillActive){
 
@@ -212,9 +212,7 @@ if(raidStillActive){
     }
 
     return res.status(200).json({
-
       live:false
-
     });
 
   }
