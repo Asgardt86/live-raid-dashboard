@@ -173,8 +173,8 @@ if(raidStillActive){
     const raidStillActive = minutesSinceLastPull < 30;
 
     const summaryActive =
-      minutesSinceLastPull >= 30 &&
-      minutesSinceLastPull < 360;
+      minutesSinceLastPull >= 25 &&
+      minutesSinceLastPull < 200;
 
     if(raidStillActive){
 
