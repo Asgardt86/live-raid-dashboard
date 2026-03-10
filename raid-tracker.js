@@ -62,12 +62,18 @@ async function loadRaidTracker(){
 
         <div class="raid-card">
 
+          <h2>LiveTracker – Raid Progress</h2>
+
           <div class="raid-status offline">
             🔴 RAID BEENDET
           </div>
 
+          <div class="raid-raidname">
+            ${data.raidName || ""}
+          </div>
+
           <div class="raid-stats">
-            Raid Dauer: ${data.raidDuration}
+            ⏱ Raid Dauer: ${data.raidDuration}
           </div>
 
           <div class="raid-summary">
@@ -123,6 +129,8 @@ async function loadRaidTracker(){
     container.innerHTML = `
 
       <div class="raid-card">
+
+        <h2>LiveTracker – Raid Progress</h2>
 
         <div class="raid-status live">
           🟢 LIVE RAID
