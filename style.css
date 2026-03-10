@@ -2,11 +2,8 @@ body{
   background:#0f172a;
   font-family:Arial;
   color:white;
-
   margin:0;
-
   min-height:100vh;
-
   display:flex;
   justify-content:center;
   align-items:center;
@@ -26,36 +23,24 @@ body{
   background:#0b1a33;
   border:1px solid #d4af37;
   border-radius:14px;
-
-  padding:22px;
-
+  padding:24px;
   width:90%;
-  max-width:700px;
-
-  height:auto;
-
+  max-width:650px;
   box-shadow:0 0 20px rgba(0,0,0,0.6);
 }
 
-/* GRID LAYOUT */
+/* Titel */
 
-.raid-layout{
+h2{
+  margin-top:0;
+}
 
-  display:grid;
+/* Raidname */
 
-  grid-template-columns: 1fr 200px;
-
-  grid-template-areas:
-    "boss timeline"
-    "kill timeline"
-    "duration timeline"
-    "pulls timeline"
-    "best timeline"
-    "log timeline";
-
-  gap:14px 20px;
-
-  align-items:start;
+.raid-raidname{
+  font-size:18px;
+  color:#facc15;
+  margin-bottom:10px;
 }
 
 /* Status */
@@ -68,13 +53,15 @@ body{
   gap:8px;
 }
 
-/* LIVE RAID */
-
 .raid-status.live{
   color:#22c55e;
 }
 
-/* Pulsierender Live Punkt */
+.raid-status.offline{
+  color:#ef4444;
+}
+
+/* Live Punkt */
 
 .raid-status.live::before{
   content:"";
@@ -82,9 +69,7 @@ body{
   height:10px;
   border-radius:50%;
   background:#22c55e;
-
   box-shadow:0 0 8px #22c55e;
-
   animation:livePulse 1.5s infinite;
 }
 
@@ -107,84 +92,60 @@ body{
 
 }
 
-/* OFFLINE */
-
-.raid-status.offline{
-  color:#ef4444;
-}
-
-/* GRID AREAS */
+/* Boss */
 
 .raid-boss{
-  grid-area:boss;
   font-size:20px;
-  margin-bottom:4px;
   color:#facc15;
+  margin-bottom:6px;
 }
 
+/* Kill */
+
 .boss-kill{
-  grid-area:kill;
-
   margin:4px 0;
-
   font-weight:bold;
-
   color:#facc15;
-
   text-shadow:
   0 0 6px gold,
   0 0 12px rgba(255,215,0,0.6);
-}
-
-.raid-duration{
-  grid-area:duration;
-}
-
-.raid-pulls{
-  grid-area:pulls;
-}
-
-.raid-best{
-  grid-area:best;
-}
-
-.raid-log{
-  grid-area:log;
-
-  display:inline-block;
-
-  color:#facc15;
-
-  text-decoration:none;
-
-  font-weight:bold;
-}
-
-.raid-log:hover{
-  text-decoration:underline;
 }
 
 /* Stats */
 
 .raid-stats{
   font-size:14px;
+  margin-bottom:3px;
+}
+
+/* Summary */
+
+.raid-summary{
+  margin-top:12px;
+}
+
+.raid-difficulty{
+  margin-top:10px;
+}
+
+.raid-difficulty-title{
+  font-weight:bold;
+  color:#facc15;
+}
+
+.raid-row{
+  font-size:14px;
 }
 
 /* Timeline */
 
 .raid-timeline{
-
-  grid-area:timeline;
-
+  margin-top:12px;
   font-size:13px;
-
   max-height:180px;
-
   overflow-y:auto;
-
-  padding-left:12px;
-
-  border-left:1px solid rgba(255,255,255,0.08);
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding-top:10px;
 }
 
 /* Pull rows */
@@ -193,44 +154,32 @@ body{
   margin-bottom:3px;
 }
 
-/* Best Pull */
-
 .pull-row.best{
   color:#22c55e;
   font-weight:bold;
 }
 
-/* MOBILE */
+/* Log link */
+
+.raid-log{
+  display:inline-block;
+  margin-top:14px;
+  color:#facc15;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.raid-log:hover{
+  text-decoration:underline;
+}
+
+/* Mobile */
 
 @media (max-width:650px){
 
-  .raid-layout{
-
-    grid-template-columns:1fr;
-
-    grid-template-areas:
-      "boss"
-      "kill"
-      "duration"
-      "pulls"
-      "best"
-      "timeline"
-      "log";
-
-  }
-
-  .raid-timeline{
-
-    border-left:none;
-
-    border-top:1px solid rgba(255,255,255,0.08);
-
-    padding-left:0;
-
-    padding-top:10px;
-
-    margin-top:10px;
-
+  .raid-card{
+    width:95%;
+    padding:18px;
   }
 
 }
