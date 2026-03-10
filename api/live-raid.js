@@ -36,7 +36,6 @@ export default async function handler(req, res) {
             data {
               code
               startTime
-              endTime
             }
           }
         }
@@ -64,9 +63,7 @@ export default async function handler(req, res) {
     }
 
     const reportCode = report.code;
-    const startTime = report.startTime;
-
-    const now = Date.now();
+    const reportStart = report.startTime;
 
     const fightsQuery = `
       {
@@ -108,12 +105,14 @@ export default async function handler(req, res) {
 
     const lastPull = pulls[pulls.length - 1];
 
-    const lastPullTime = startTime + lastPull.startTime;
+    const now = Date.now();
+
+    const lastPullTime = reportStart + lastPull.startTime;
 
     const minutesSinceLastPull =
       (now - lastPullTime) / 1000 / 60;
 
-    const raidStillActive = minutesSinceLastPull < 10;
+    const raidStillActive = minutesSinceLastPull < 30;
 
     const currentBoss = lastPull.name;
 
@@ -126,8 +125,9 @@ export default async function handler(req, res) {
     const difficulty =
       difficultyMap[lastPull.difficulty] || "";
 
-    const bossPulls = pulls.filter(
-      p => p.name === currentBoss
+    const bossPulls = pulls.filter(p =>
+      p.name === currentBoss &&
+      p.difficulty === lastPull.difficulty
     );
 
     const totalPulls = bossPulls.length;
@@ -153,7 +153,7 @@ export default async function handler(req, res) {
 
     });
 
-    const raidDurationMs = now - startTime;
+    const raidDurationMs = now - reportStart;
 
     const hours =
       Math.floor(raidDurationMs / (1000 * 60 * 60));
