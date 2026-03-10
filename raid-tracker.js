@@ -7,52 +7,11 @@ async function loadRaidTracker(){
     const res = await fetch("/api/live-raid");
     const data = await res.json();
 
-    // RAID SUMMARY
-    if(!data.live && data.summary){
+    /* ========================
+       KEIN RAID
+    ======================== */
 
-      container.innerHTML = `
-        <div class="raid-card">
-
-          <div class="raid-status offline">
-            🔴 RAID BEENDET
-          </div>
-
-          <div class="raid-layout">
-
-            <div class="raid-boss">
-              ${data.boss || ""} ${data.difficulty ? "– " + data.difficulty : ""}
-            </div>
-
-            <div class="raid-stats raid-duration">
-              Raid Dauer: ${data.raidDuration || ""}
-            </div>
-
-            <div class="raid-stats raid-pulls">
-              Pulls: ${data.totalPulls || 0}
-            </div>
-
-            <div class="raid-stats raid-best">
-              Best Pull: ${data.bestPull || "-"}%
-            </div>
-
-            <a class="raid-log"
-            href="https://www.warcraftlogs.com/reports/${data.report}"
-            target="_blank">
-
-            WarcraftLogs öffnen
-
-            </a>
-
-          </div>
-
-        </div>
-      `;
-
-      return;
-    }
-
-    // Kein Raid aktiv
-    if(!data.live){
+    if(!data.live && !data.summary){
 
       container.innerHTML = `
         <div class="raid-card">
@@ -65,9 +24,76 @@ async function loadRaidTracker(){
       `;
 
       return;
+
     }
 
-    // Timeline bauen
+    /* ========================
+       RAID SUMMARY
+    ======================== */
+
+    if(data.summary){
+
+      let summaryHTML = "";
+
+      Object.entries(data.raidStats).forEach(([raid,diffs]) => {
+
+        summaryHTML += `<div class="raid-section">`;
+
+        Object.entries(diffs).forEach(([difficulty,stats]) => {
+
+          if(stats.kills === 0 && stats.pulls === 0) return;
+
+          summaryHTML += `
+            <div class="raid-row">
+              <strong>${difficulty}</strong> — 
+              ${stats.kills} Boss${stats.kills === 1 ? "" : "e"} • 
+              ${stats.pulls} Pulls
+            </div>
+          `;
+
+        });
+
+        summaryHTML += `</div>`;
+
+      });
+
+      container.innerHTML = `
+
+        <div class="raid-card">
+
+          <div class="raid-status offline">
+            🔴 RAID BEENDET
+          </div>
+
+          <div class="raid-stats">
+            Raid Dauer: ${data.raidDuration}
+          </div>
+
+          <div class="raid-summary">
+
+            ${summaryHTML}
+
+          </div>
+
+          <a class="raid-log"
+          href="https://www.warcraftlogs.com/reports/${data.report}"
+          target="_blank">
+
+          WarcraftLogs öffnen
+
+          </a>
+
+        </div>
+      `;
+
+      return;
+
+    }
+
+    /* ========================
+       LIVE RAID
+    ======================== */
+
     let timelineHTML = "";
 
     if(data.timeline){
@@ -97,46 +123,42 @@ async function loadRaidTracker(){
       <div class="raid-card">
 
         <div class="raid-status live">
-          LIVE RAID
+          🟢 LIVE RAID
         </div>
 
-        <div class="raid-layout">
+        <div class="raid-boss">
+        ${data.boss} ${data.difficulty ? "— " + data.difficulty : ""}
+        </div>
 
-          <div class="raid-boss">
-            ${data.boss || ""} ${data.difficulty ? "– " + data.difficulty : ""}
-          </div>
+        ${killText}
 
-          <div class="raid-timeline">
+        <div class="raid-stats">
+          Raid läuft seit: ${data.raidDuration}
+        </div>
 
-            <strong>Progress</strong>
+        <div class="raid-stats">
+          Pulls: ${data.totalPulls}
+        </div>
 
-            ${timelineHTML}
+        <div class="raid-stats">
+          Best Pull: ${data.bestPull}%
+        </div>
 
-          </div>
+        <div class="raid-timeline">
 
-          ${killText}
+          <strong>Progress Timeline</strong>
 
-          <div class="raid-stats raid-duration">
-            Raid läuft seit: ${data.raidDuration || ""}
-          </div>
-
-          <div class="raid-stats raid-pulls">
-            Pulls: ${data.totalPulls || 0}
-          </div>
-
-          <div class="raid-stats raid-best">
-            Best Pull: ${data.bestPull || "-"}%
-          </div>
-
-          <a class="raid-log"
-          href="https://www.warcraftlogs.com/reports/${data.report}"
-          target="_blank">
-
-          WarcraftLogs öffnen
-
-          </a>
+          ${timelineHTML}
 
         </div>
+
+        <a class="raid-log"
+        href="https://www.warcraftlogs.com/reports/${data.report}"
+        target="_blank">
+
+        WarcraftLogs öffnen
+
+        </a>
 
       </div>
 
@@ -158,5 +180,4 @@ async function loadRaidTracker(){
 
 loadRaidTracker();
 
-// alle 30 Sekunden aktualisieren
 setInterval(loadRaidTracker,30000);
