@@ -131,7 +131,7 @@ async function loadRaidTracker(){
 
 
         <div class="raid-status live">
-          🟢 LIVE RAID
+           LIVE RAID
         </div>
 
         <div class="raid-boss">
