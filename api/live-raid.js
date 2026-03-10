@@ -64,6 +64,8 @@ export default async function handler(req, res) {
 
     const reportCode = report.code;
     const reportStart = report.startTime;
+    const firstPull = pulls(0);
+    const firstPullTime = reportStart + firstPull.startTime;
 
     const fightsQuery = `
       {
@@ -160,9 +162,9 @@ export default async function handler(req, res) {
     let raidDurationMs;
 
     if(raidStillActive){
-      raidDurationMs = now - reportStart;
+      raidDurationMs = now - firstPullTime;
     }else{
-      raidDurationMs = lastPullTime - reportStart;
+      raidDurationMs = lastPullTime - firstPullTime;
     }
 
     const hours =
