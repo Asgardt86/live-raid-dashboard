@@ -112,10 +112,10 @@ export default async function handler(req, res) {
     const minutesSinceLastPull =
       (now - lastPullTime) / 1000 / 60;
 
-    const raidStillActive = minutesSinceLastPull < 30;
+    const raidStillActive = minutesSinceLastPull < 20;
 
     const summaryActive =
-      minutesSinceLastPull >= 30 &&
+      minutesSinceLastPull >= 20 &&
       minutesSinceLastPull < 200;
 
     const currentBoss = lastPull.name;
