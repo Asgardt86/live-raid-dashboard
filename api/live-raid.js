@@ -117,7 +117,7 @@ export default async function handler(req, res) {
 
     const summaryActive =
       minutesSinceLastPull >= 15 &&
-      minutesSinceLastPull < 200;
+      minutesSinceLastPull < 700;
 
     const currentBoss = lastPull.name;
 
