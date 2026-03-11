@@ -172,7 +172,7 @@ export default async function handler(req, res) {
       (now-reportStart)/1000/60;
 
     const summaryActive =
-      !raidStillActive && reportAgeMinutes < 360;
+      !raidStillActive && reportAgeMinutes < 1200;
 
     /* =====================
        DIFFICULTY
