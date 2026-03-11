@@ -1,5 +1,5 @@
 body{
-  background:#0f172a;
+  background:#0b0f10;
   font-family:Arial;
   color:white;
   margin:0;
@@ -20,13 +20,22 @@ body{
 /* Card */
 
 .raid-card{
-  background:#0b1a33;
-  border:1px solid #d4af37;
+  background:linear-gradient(
+  180deg,
+  #1a2022,
+  #0f1314
+);
+  border:1px solid #a38b53;
   border-radius:14px;
   padding:24px;
   width:90%;
   max-width:650px;
-  box-shadow:0 0 20px rgba(0,0,0,0.6);
+
+  /* besserer WoW Panel Effekt */
+
+  box-shadow:
+  0 0 25px rgba(0,0,0,0.8),
+  inset 0 0 20px rgba(0,0,0,0.6);
 }
 
 /* Titel */
@@ -39,7 +48,7 @@ h2{
 
 .raid-raidname{
   font-size:18px;
-  color:#facc15;
+  color:#d6c79a;
   margin-bottom:10px;
 }
 
@@ -55,6 +64,7 @@ h2{
 
 .raid-status.live{
   color:#22c55e;
+  text-shadow:0 0 6px rgba(34,197,94,0.6);
 }
 
 .raid-status.offline{
@@ -96,7 +106,7 @@ h2{
 
 .raid-boss{
   font-size:20px;
-  color:#facc15;
+  color:#d6c79a;
   margin-bottom:6px;
 }
 
@@ -105,10 +115,12 @@ h2{
 .boss-kill{
   margin:4px 0;
   font-weight:bold;
-  color:#facc15;
+  color:#d6c79a;
+
+  /* ruhigerer WoW Glow */
+
   text-shadow:
-  0 0 6px gold,
-  0 0 12px rgba(255,215,0,0.6);
+  0 0 4px rgba(214,199,154,0.6);
 }
 
 /* Stats */
@@ -130,7 +142,7 @@ h2{
 
 .raid-difficulty-title{
   font-weight:bold;
-  color:#facc15;
+  color:#d6c79a;
 }
 
 .raid-row{
@@ -144,7 +156,7 @@ h2{
   font-size:13px;
   max-height:180px;
   overflow-y:auto;
-  border-top:1px solid rgba(255,255,255,0.1);
+  border-top:1px solid rgba(255,255,255,0.08);
   padding-top:10px;
 }
 
@@ -164,7 +176,7 @@ h2{
 .raid-log{
   display:inline-block;
   margin-top:14px;
-  color:#facc15;
+  color:#d6c79a;
   text-decoration:none;
   font-weight:bold;
 }
