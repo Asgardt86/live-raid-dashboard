@@ -68,7 +68,7 @@ async function loadRaidTracker(){
           </div>
 
           <div class="raid-raidname">
-            ${data.raidName || ""}
+            ${data.reportTitle || data.raidName || ""}
           </div>
 
           <div class="raid-stats">
