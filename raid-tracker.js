@@ -134,6 +134,10 @@ async function loadRaidTracker(){
            LIVE RAID
         </div>
 
+        <div class="raid-raidname">
+        ${data.reportTitle || data.raidName || ""}
+        </div>
+
         <div class="raid-boss">
           ${data.boss} ${data.difficulty ? "— " + data.difficulty : ""}
         </div>
