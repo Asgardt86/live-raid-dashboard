@@ -40,6 +40,7 @@ export default async function handler(req, res) {
             data {
               code
               startTime
+              title
             }
           }
         }
@@ -71,6 +72,7 @@ export default async function handler(req, res) {
     let fights = [];
     let reportStart = 0;
     let raidName = "";
+    let reportTitle = "";
 
     /* =====================
        AKTIVEN LOG SUCHEN
@@ -133,6 +135,7 @@ export default async function handler(req, res) {
         fights = pulls;
         reportStart = report.startTime;
         raidName = reportData?.zone?.name || "";
+        reportTitle = report.title || "";
         break;
 
       }
@@ -143,6 +146,7 @@ export default async function handler(req, res) {
         fights = pulls;
         reportStart = report.startTime;
         raidName = reportData?.zone?.name || "";
+        reportTitle = report.title || "";
 
       }
 
@@ -273,6 +277,7 @@ export default async function handler(req, res) {
 
         live:true,
         raidName:raidName,
+        reportTitle:reportTitle,
         boss:currentBoss,
         difficulty:difficulty,
         report:activeReport.code,
@@ -297,6 +302,7 @@ export default async function handler(req, res) {
         live:false,
         summary:true,
         raidName:raidName,
+        reportTitle:reportTitle,
         raidDuration:raidDuration,
         report:activeReport.code,
         raidStats:raidStats
