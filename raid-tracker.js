@@ -1,8 +1,6 @@
 async function loadRaidTracker(){
 
   const container = document.getElementById("raid-tracker");
-  const left = document.getElementById("raid-left");
-  const right = document.getElementById("raid-right");
 
   try{
 
@@ -24,9 +22,6 @@ async function loadRaidTracker(){
 
         </div>
       `;
-
-      left.innerHTML = "";
-      right.innerHTML = "";
 
       return;
     }
@@ -67,6 +62,7 @@ async function loadRaidTracker(){
 
         <div class="raid-card">
 
+
           <div class="raid-status offline">
             🔴 RAID BEENDET
           </div>
@@ -80,32 +76,25 @@ async function loadRaidTracker(){
           </div>
 
           <div class="raid-summary">
+
             ${summaryHTML}
+
           </div>
 
           <a class="raid-log"
           href="https://www.warcraftlogs.com/reports/${data.report}"
           target="_blank">
+
           WarcraftLogs öffnen
+
           </a>
 
         </div>
-      `;
 
-      /* LEFT PANEL */
-      left.innerHTML = `
-        <h3>Raid Info</h3>
-        <div class="side-row">🏰 ${data.raidName || "-"}</div>
-        <div class="side-row">⏱ Dauer: ${data.raidDuration}</div>
-      `;
-
-      /* RIGHT PANEL */
-      right.innerHTML = `
-        <h3>Ergebnis</h3>
-        <div class="side-row">📊 Raid abgeschlossen</div>
       `;
 
       return;
+
     }
 
     /* ========================
@@ -139,6 +128,7 @@ async function loadRaidTracker(){
     container.innerHTML = `
 
       <div class="raid-card">
+
 
         <div class="raid-status live">
            LIVE RAID
@@ -186,26 +176,6 @@ async function loadRaidTracker(){
 
     `;
 
-    /* LEFT PANEL */
-    left.innerHTML = `
-      <h3>Raid Info</h3>
-      <div class="side-row">🏰 ${data.raidName}</div>
-      <div class="side-row">👹 ${data.boss}</div>
-      <div class="side-row">⚔️ ${data.difficulty}</div>
-      <div class="side-row">⏱ ${data.raidDuration}</div>
-    `;
-
-    /* RIGHT PANEL */
-    right.innerHTML = `
-      <h3>Progress</h3>
-      <div class="side-row">⚔️ Pulls: ${data.totalPulls}</div>
-      <div class="side-row">🎯 Best Try: ${data.bestPull}%</div>
-
-      <div class="progress-bar">
-        <div class="progress-fill" style="width:${100 - data.bestPull}%"></div>
-      </div>
-    `;
-
   }
 
   catch(e){
@@ -215,9 +185,6 @@ async function loadRaidTracker(){
         Fehler beim Laden
       </div>
     `;
-
-    left.innerHTML = "";
-    right.innerHTML = "";
 
   }
 
