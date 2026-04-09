@@ -1,10 +1,5 @@
 body{
-  background:
-    radial-gradient(circle at 50% 40%, rgba(30,40,45,0.4), transparent 60%),
-    radial-gradient(circle at 20% 80%, rgba(80,60,20,0.2), transparent 70%),
-    radial-gradient(circle at 80% 20%, rgba(80,60,20,0.2), transparent 70%),
-    linear-gradient(180deg, #0b0f10, #060809);
-
+  background:#0b0f10;
   font-family:Arial;
   color:white;
   margin:0;
@@ -14,24 +9,7 @@ body{
   align-items:center;
 }
 
-/* ✨ dezenter WoW Glow */
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-
-  background:
-    radial-gradient(circle at 30% 50%, rgba(100,80,30,0.12), transparent 60%),
-    radial-gradient(circle at 70% 50%, rgba(100,80,30,0.12), transparent 60%);
-
-  filter: blur(50px);
-  z-index:-1;
-}
-
-/* ========================
-   Container
-======================== */
+/* Container */
 
 #raid-tracker{
   width:100%;
@@ -39,9 +17,7 @@ body::before{
   justify-content:center;
 }
 
-/* ========================
-   Card
-======================== */
+/* Card */
 
 .raid-card{
   background:linear-gradient(
@@ -55,25 +31,20 @@ body::before{
   width:90%;
   max-width:650px;
 
+  /* besserer WoW Panel Effekt */
+
   box-shadow:
   0 0 25px rgba(0,0,0,0.8),
   inset 0 0 20px rgba(0,0,0,0.6);
-
-  /* ✨ leichter Glas-Effekt */
-  backdrop-filter: blur(4px);
 }
 
-/* ========================
-   Titel
-======================== */
+/* Titel */
 
 h2{
   margin-top:0;
 }
 
-/* ========================
-   Raidname
-======================== */
+/* Raidname */
 
 .raid-raidname{
   font-size:18px;
@@ -81,9 +52,7 @@ h2{
   margin-bottom:10px;
 }
 
-/* ========================
-   Status
-======================== */
+/* Status */
 
 .raid-status{
   font-weight:bold;
@@ -133,9 +102,7 @@ h2{
 
 }
 
-/* ========================
-   Boss
-======================== */
+/* Boss */
 
 .raid-boss{
   font-size:20px;
@@ -143,31 +110,27 @@ h2{
   margin-bottom:6px;
 }
 
-/* ========================
-   Kill
-======================== */
+/* Kill */
 
 .boss-kill{
   margin:4px 0;
   font-weight:bold;
   color:#d6c79a;
 
+  /* ruhigerer WoW Glow */
+
   text-shadow:
   0 0 4px rgba(214,199,154,0.6);
 }
 
-/* ========================
-   Stats
-======================== */
+/* Stats */
 
 .raid-stats{
   font-size:14px;
   margin-bottom:3px;
 }
 
-/* ========================
-   Summary
-======================== */
+/* Summary */
 
 .raid-summary{
   margin-top:12px;
@@ -186,9 +149,7 @@ h2{
   font-size:14px;
 }
 
-/* ========================
-   Timeline
-======================== */
+/* Timeline */
 
 .raid-timeline{
   margin-top:12px;
@@ -210,9 +171,7 @@ h2{
   font-weight:bold;
 }
 
-/* ========================
-   Log link
-======================== */
+/* Log link */
 
 .raid-log{
   display:inline-block;
@@ -226,9 +185,7 @@ h2{
   text-decoration:underline;
 }
 
-/* ========================
-   Mobile
-======================== */
+/* Mobile */
 
 @media (max-width:650px){
 
