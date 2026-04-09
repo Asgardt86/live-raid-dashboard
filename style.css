@@ -14,7 +14,7 @@ body{
   align-items:center;
 }
 
-/* zusätzlicher weicher Glow */
+/* ✨ dezenter WoW Glow */
 
 body::before{
   content:"";
@@ -22,70 +22,15 @@ body::before{
   inset:0;
 
   background:
-    radial-gradient(circle at 30% 50%, rgba(100,80,30,0.15), transparent 60%),
-    radial-gradient(circle at 70% 50%, rgba(100,80,30,0.15), transparent 60%);
+    radial-gradient(circle at 30% 50%, rgba(100,80,30,0.12), transparent 60%),
+    radial-gradient(circle at 70% 50%, rgba(100,80,30,0.12), transparent 60%);
 
-  filter: blur(40px);
+  filter: blur(50px);
   z-index:-1;
 }
 
 /* ========================
-   LAYOUT
-======================== */
-
-.raid-container{
-  display:grid;
-  grid-template-columns: 1fr 650px 1fr;
-  gap:20px;
-  width:100%;
-  max-width:1200px;
-  padding:20px;
-  box-sizing:border-box;
-}
-
-.center{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:100%;
-}
-
-/* ========================
-   SIDE PANELS
-======================== */
-
-.side{
-  background:linear-gradient(
-    180deg,
-    #1a2022,
-    #0f1314
-  );
-  border:1px solid #a38b53;
-  border-radius:14px;
-  padding:16px;
-  font-size:14px;
-
-  box-shadow:
-    0 0 20px rgba(0,0,0,0.8),
-    inset 0 0 15px rgba(0,0,0,0.6);
-
-  min-height:200px;
-}
-
-.side h3{
-  margin-top:0;
-  margin-bottom:10px;
-  color:#d6c79a;
-  font-size:16px;
-}
-
-.side-row{
-  margin-bottom:6px;
-  opacity:0.9;
-}
-
-/* ========================
-   RAID TRACKER CONTAINER
+   Container
 ======================== */
 
 #raid-tracker{
@@ -95,15 +40,15 @@ body::before{
 }
 
 /* ========================
-   CARD
+   Card
 ======================== */
 
 .raid-card{
   background:linear-gradient(
-    180deg,
-    #1a2022,
-    #0f1314
-  );
+  180deg,
+  #1a2022,
+  #0f1314
+);
   border:1px solid #a38b53;
   border-radius:14px;
   padding:24px;
@@ -111,21 +56,24 @@ body::before{
   max-width:650px;
 
   box-shadow:
-    0 0 25px rgba(0,0,0,0.8),
-    inset 0 0 20px rgba(0,0,0,0.6);
+  0 0 25px rgba(0,0,0,0.8),
+  inset 0 0 20px rgba(0,0,0,0.6);
 
+  /* ✨ leichter Glas-Effekt */
   backdrop-filter: blur(4px);
 }
 
 /* ========================
-   TEXT & TITEL
+   Titel
 ======================== */
 
 h2{
   margin-top:0;
 }
 
-/* Raidname */
+/* ========================
+   Raidname
+======================== */
 
 .raid-raidname{
   font-size:18px;
@@ -134,7 +82,7 @@ h2{
 }
 
 /* ========================
-   STATUS
+   Status
 ======================== */
 
 .raid-status{
@@ -186,7 +134,7 @@ h2{
 }
 
 /* ========================
-   BOSS / KILL
+   Boss
 ======================== */
 
 .raid-boss{
@@ -195,17 +143,21 @@ h2{
   margin-bottom:6px;
 }
 
+/* ========================
+   Kill
+======================== */
+
 .boss-kill{
   margin:4px 0;
   font-weight:bold;
   color:#d6c79a;
 
   text-shadow:
-    0 0 4px rgba(214,199,154,0.6);
+  0 0 4px rgba(214,199,154,0.6);
 }
 
 /* ========================
-   STATS
+   Stats
 ======================== */
 
 .raid-stats{
@@ -214,7 +166,7 @@ h2{
 }
 
 /* ========================
-   SUMMARY
+   Summary
 ======================== */
 
 .raid-summary{
@@ -235,7 +187,7 @@ h2{
 }
 
 /* ========================
-   TIMELINE
+   Timeline
 ======================== */
 
 .raid-timeline{
@@ -247,6 +199,8 @@ h2{
   padding-top:10px;
 }
 
+/* Pull rows */
+
 .pull-row{
   margin-bottom:3px;
 }
@@ -257,31 +211,7 @@ h2{
 }
 
 /* ========================
-   PROGRESS BAR
-======================== */
-
-.progress-bar{
-  background:#111;
-  height:8px;
-  border-radius:6px;
-  margin-top:8px;
-  overflow:hidden;
-}
-
-.progress-fill{
-  background:linear-gradient(
-    90deg,
-    #22c55e,
-    #4ade80
-  );
-  height:100%;
-  border-radius:6px;
-
-  box-shadow:0 0 8px rgba(34,197,94,0.6);
-}
-
-/* ========================
-   LINK
+   Log link
 ======================== */
 
 .raid-log{
@@ -297,20 +227,8 @@ h2{
 }
 
 /* ========================
-   MOBILE
+   Mobile
 ======================== */
-
-@media (max-width:900px){
-
-  .raid-container{
-    grid-template-columns:1fr;
-  }
-
-  .side{
-    display:none;
-  }
-
-}
 
 @media (max-width:650px){
 
