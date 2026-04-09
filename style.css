@@ -1,5 +1,10 @@
 body{
-  background:#0b0f10;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(30,40,45,0.4), transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(80,60,20,0.2), transparent 70%),
+    radial-gradient(circle at 80% 20%, rgba(80,60,20,0.2), transparent 70%),
+    linear-gradient(180deg, #0b0f10, #060809);
+
   font-family:Arial;
   color:white;
   margin:0;
@@ -9,8 +14,23 @@ body{
   align-items:center;
 }
 
+/* zusätzlicher weicher Glow */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:
+    radial-gradient(circle at 30% 50%, rgba(100,80,30,0.15), transparent 60%),
+    radial-gradient(circle at 70% 50%, rgba(100,80,30,0.15), transparent 60%);
+
+  filter: blur(40px);
+  z-index:-1;
+}
+
 /* ========================
-   LAYOUT (NEU)
+   LAYOUT
 ======================== */
 
 .raid-container{
@@ -31,7 +51,7 @@ body{
 }
 
 /* ========================
-   SIDE PANELS (NEU)
+   SIDE PANELS
 ======================== */
 
 .side{
@@ -75,7 +95,7 @@ body{
 }
 
 /* ========================
-   CARD (UNVERÄNDERT)
+   CARD
 ======================== */
 
 .raid-card{
@@ -93,6 +113,8 @@ body{
   box-shadow:
     0 0 25px rgba(0,0,0,0.8),
     inset 0 0 20px rgba(0,0,0,0.6);
+
+  backdrop-filter: blur(4px);
 }
 
 /* ========================
@@ -235,7 +257,7 @@ h2{
 }
 
 /* ========================
-   PROGRESS BAR (NEU)
+   PROGRESS BAR
 ======================== */
 
 .progress-bar{
