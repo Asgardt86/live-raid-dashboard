@@ -1,5 +1,10 @@
 body{
-  background:#0b0f10;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(30,40,45,0.35), transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(80,60,20,0.15), transparent 70%),
+    radial-gradient(circle at 80% 20%, rgba(80,60,20,0.15), transparent 70%),
+    linear-gradient(180deg, #0b0f10, #060809);
+
   font-family:Arial;
   color:white;
   margin:0;
@@ -7,6 +12,21 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
+}
+
+/* ✨ dezenter Hintergrund-Glow */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+
+  background:
+    radial-gradient(circle at 30% 50%, rgba(120,90,30,0.08), transparent 60%),
+    radial-gradient(circle at 70% 50%, rgba(120,90,30,0.08), transparent 60%);
+
+  filter: blur(60px);
+  z-index:-1;
 }
 
 /* Container */
@@ -21,21 +41,26 @@ body{
 
 .raid-card{
   background:linear-gradient(
-  180deg,
-  #1a2022,
-  #0f1314
-);
+    180deg,
+    #1a2022,
+    #0f1314
+  );
   border:1px solid #a38b53;
   border-radius:14px;
   padding:24px;
   width:90%;
   max-width:650px;
 
-  /* besserer WoW Panel Effekt */
+  /* ✨ etwas mehr Tiefe */
 
   box-shadow:
-  0 0 25px rgba(0,0,0,0.8),
-  inset 0 0 20px rgba(0,0,0,0.6);
+    0 0 25px rgba(0,0,0,0.8),
+    0 0 15px rgba(163,139,83,0.15),
+    inset 0 0 20px rgba(0,0,0,0.6);
+
+  /* ✨ leichter Glas-Effekt */
+
+  backdrop-filter: blur(4px);
 }
 
 /* Titel */
@@ -50,6 +75,10 @@ h2{
   font-size:18px;
   color:#d6c79a;
   margin-bottom:10px;
+
+  /* ✨ leichter Glow */
+
+  text-shadow:0 0 6px rgba(214,199,154,0.25);
 }
 
 /* Status */
@@ -64,11 +93,12 @@ h2{
 
 .raid-status.live{
   color:#22c55e;
-  text-shadow:0 0 6px rgba(34,197,94,0.6);
+  text-shadow:0 0 8px rgba(34,197,94,0.6);
 }
 
 .raid-status.offline{
   color:#ef4444;
+  text-shadow:0 0 6px rgba(239,68,68,0.4);
 }
 
 /* Live Punkt */
@@ -79,7 +109,7 @@ h2{
   height:10px;
   border-radius:50%;
   background:#22c55e;
-  box-shadow:0 0 8px #22c55e;
+  box-shadow:0 0 10px #22c55e;
   animation:livePulse 1.5s infinite;
 }
 
@@ -108,6 +138,8 @@ h2{
   font-size:20px;
   color:#d6c79a;
   margin-bottom:6px;
+
+  text-shadow:0 0 4px rgba(214,199,154,0.25);
 }
 
 /* Kill */
@@ -117,10 +149,8 @@ h2{
   font-weight:bold;
   color:#d6c79a;
 
-  /* ruhigerer WoW Glow */
-
   text-shadow:
-  0 0 4px rgba(214,199,154,0.6);
+  0 0 6px rgba(214,199,154,0.5);
 }
 
 /* Stats */
@@ -143,6 +173,8 @@ h2{
 .raid-difficulty-title{
   font-weight:bold;
   color:#d6c79a;
+
+  text-shadow:0 0 4px rgba(214,199,154,0.25);
 }
 
 .raid-row{
@@ -169,6 +201,7 @@ h2{
 .pull-row.best{
   color:#22c55e;
   font-weight:bold;
+  text-shadow:0 0 6px rgba(34,197,94,0.4);
 }
 
 /* Log link */
@@ -179,6 +212,8 @@ h2{
   color:#d6c79a;
   text-decoration:none;
   font-weight:bold;
+
+  text-shadow:0 0 4px rgba(214,199,154,0.3);
 }
 
 .raid-log:hover{
