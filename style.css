@@ -9,7 +9,64 @@ body{
   align-items:center;
 }
 
-/* Container */
+/* ========================
+   LAYOUT (NEU)
+======================== */
+
+.raid-container{
+  display:grid;
+  grid-template-columns: 1fr 650px 1fr;
+  gap:20px;
+  width:100%;
+  max-width:1200px;
+  padding:20px;
+  box-sizing:border-box;
+}
+
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+}
+
+/* ========================
+   SIDE PANELS (NEU)
+======================== */
+
+.side{
+  background:linear-gradient(
+    180deg,
+    #1a2022,
+    #0f1314
+  );
+  border:1px solid #a38b53;
+  border-radius:14px;
+  padding:16px;
+  font-size:14px;
+
+  box-shadow:
+    0 0 20px rgba(0,0,0,0.8),
+    inset 0 0 15px rgba(0,0,0,0.6);
+
+  min-height:200px;
+}
+
+.side h3{
+  margin-top:0;
+  margin-bottom:10px;
+  color:#d6c79a;
+  font-size:16px;
+}
+
+.side-row{
+  margin-bottom:6px;
+  opacity:0.9;
+}
+
+/* ========================
+   RAID TRACKER CONTAINER
+======================== */
 
 #raid-tracker{
   width:100%;
@@ -17,28 +74,30 @@ body{
   justify-content:center;
 }
 
-/* Card */
+/* ========================
+   CARD (UNVERÄNDERT)
+======================== */
 
 .raid-card{
   background:linear-gradient(
-  180deg,
-  #1a2022,
-  #0f1314
-);
+    180deg,
+    #1a2022,
+    #0f1314
+  );
   border:1px solid #a38b53;
   border-radius:14px;
   padding:24px;
   width:90%;
   max-width:650px;
 
-  /* besserer WoW Panel Effekt */
-
   box-shadow:
-  0 0 25px rgba(0,0,0,0.8),
-  inset 0 0 20px rgba(0,0,0,0.6);
+    0 0 25px rgba(0,0,0,0.8),
+    inset 0 0 20px rgba(0,0,0,0.6);
 }
 
-/* Titel */
+/* ========================
+   TEXT & TITEL
+======================== */
 
 h2{
   margin-top:0;
@@ -52,7 +111,9 @@ h2{
   margin-bottom:10px;
 }
 
-/* Status */
+/* ========================
+   STATUS
+======================== */
 
 .raid-status{
   font-weight:bold;
@@ -102,7 +163,9 @@ h2{
 
 }
 
-/* Boss */
+/* ========================
+   BOSS / KILL
+======================== */
 
 .raid-boss{
   font-size:20px;
@@ -110,27 +173,27 @@ h2{
   margin-bottom:6px;
 }
 
-/* Kill */
-
 .boss-kill{
   margin:4px 0;
   font-weight:bold;
   color:#d6c79a;
 
-  /* ruhigerer WoW Glow */
-
   text-shadow:
-  0 0 4px rgba(214,199,154,0.6);
+    0 0 4px rgba(214,199,154,0.6);
 }
 
-/* Stats */
+/* ========================
+   STATS
+======================== */
 
 .raid-stats{
   font-size:14px;
   margin-bottom:3px;
 }
 
-/* Summary */
+/* ========================
+   SUMMARY
+======================== */
 
 .raid-summary{
   margin-top:12px;
@@ -149,7 +212,9 @@ h2{
   font-size:14px;
 }
 
-/* Timeline */
+/* ========================
+   TIMELINE
+======================== */
 
 .raid-timeline{
   margin-top:12px;
@@ -160,8 +225,6 @@ h2{
   padding-top:10px;
 }
 
-/* Pull rows */
-
 .pull-row{
   margin-bottom:3px;
 }
@@ -171,7 +234,33 @@ h2{
   font-weight:bold;
 }
 
-/* Log link */
+/* ========================
+   PROGRESS BAR (NEU)
+======================== */
+
+.progress-bar{
+  background:#111;
+  height:8px;
+  border-radius:6px;
+  margin-top:8px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  background:linear-gradient(
+    90deg,
+    #22c55e,
+    #4ade80
+  );
+  height:100%;
+  border-radius:6px;
+
+  box-shadow:0 0 8px rgba(34,197,94,0.6);
+}
+
+/* ========================
+   LINK
+======================== */
 
 .raid-log{
   display:inline-block;
@@ -185,7 +274,21 @@ h2{
   text-decoration:underline;
 }
 
-/* Mobile */
+/* ========================
+   MOBILE
+======================== */
+
+@media (max-width:900px){
+
+  .raid-container{
+    grid-template-columns:1fr;
+  }
+
+  .side{
+    display:none;
+  }
+
+}
 
 @media (max-width:650px){
 
